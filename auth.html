@@ -1,0 +1,98 @@
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CosmosX — Login / Sign up</title>
+  <meta name="color-scheme" content="light dark" />
+  <script>
+  (function(){
+    try {
+      var KEY='theme';
+      var saved = localStorage.getItem(KEY);
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var theme = saved || (prefersDark ? 'dark' : 'light');
+      var root = document.documentElement;
+      root.classList.toggle('dark', theme === 'dark');
+      root.setAttribute('data-theme', theme);
+      root.style.colorScheme = theme;
+    } catch(e){}
+  })();
+</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{brand:{50:'#ecfdf5',100:'#d1fae5',200:'#a7f3d0',300:'#6ee7b7',400:'#34d399',500:'#10b981',600:'#059669',700:'#047857',800:'#065f46',900:'#064e3b'}}}}}</script>
+</head>
+<body class="antialiased text-slate-800 bg-white dark:bg-slate-950 dark:text-slate-100">
+  <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/70 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 font-semibold"><span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white">CX</span><span>CosmosX</span></a>
+      <div class="flex items-center gap-2">
+        <button data-theme-toggle class="inline-flex items-center justify-center rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-900" title="Toggle theme">
+          <svg class="hidden h-5 w-5 dark:inline-block" viewBox="0 0 24 24" fill="currentColor"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"/></svg>
+          <svg class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="py-16">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 items-center">
+      <div class="order-2 lg:order-1 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 bg-white dark:bg-slate-950 shadow">
+        <div class="flex items-center justify-between">
+          <h2 id="formTitle" class="text-2xl font-bold tracking-tight">Welcome back</h2>
+          <button id="switchBtn" class="text-sm inline-flex items-center gap-1 text-brand-600">Need an account? →</button>
+        </div>
+        <form id="authForm" class="mt-6 grid gap-4">
+          <div id="nameWrap" class="hidden"><input placeholder="Full name" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-4 py-3" /></div>
+          <input required type="email" placeholder="Email" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-4 py-3" />
+          <input required type="password" placeholder="Password" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-4 py-3" />
+          <button class="inline-flex justify-center items-center rounded-xl bg-brand-500 px-6 py-3 font-semibold text-white shadow hover:bg-brand-600"><span id="submitText">Login</span></button>
+        </form>
+        <p class="mt-4 text-xs text-slate-500">Demo auth: any email/password works; you’ll be redirected to the dashboard.</p>
+      </div>
+      <div class="order-1 lg:order-2">
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">CosmosX Volunteers</h1>
+        <p class="mt-4 text-lg text-slate-600 dark:text-slate-300">Join missions, climb the leaderboard, and represent your district.</p>
+        <ul class="mt-6 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+          <li class="flex items-start gap-3"><span class="mt-1 inline-block h-2 w-2 rounded-full bg-emerald-500"></span> Earn points for verified submissions</li>
+          <li class="flex items-start gap-3"><span class="mt-1 inline-block h-2 w-2 rounded-full bg-sky-500"></span> Top 10 per district meet a celebrity monthly</li>
+          <li class="flex items-start gap-3"><span class="mt-1 inline-block h-2 w-2 rounded-full bg-amber-500"></span> Build your public profile & badges</li>
+        </ul>
+        <a class="mt-6 inline-flex items-center gap-2 text-brand-600 hover:underline" href="index.html">← Back to Home</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  (function(){
+    const KEY='theme';
+    const root=document.documentElement;
+    const mq=window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+    const get=()=>localStorage.getItem(KEY) || (mq && mq.matches ? 'dark' : 'light');
+    const apply=t=>{ root.classList.toggle('dark', t==='dark'); root.setAttribute('data-theme', t); root.style.colorScheme=t; document.querySelectorAll('[data-theme-toggle]').forEach(b=>b.setAttribute('aria-pressed', t==='dark')); };
+    const set=t=>{ localStorage.setItem(KEY, t); apply(t); };
+    apply(get());
+    document.addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-theme-toggle]');
+      if(!btn) return;
+      const cur = get();
+      set(cur==='dark' ? 'light' : 'dark');
+    }, false);
+    mq && mq.addEventListener && mq.addEventListener('change', e=>{
+      if(!localStorage.getItem(KEY)) apply(e.matches ? 'dark' : 'light');
+    });
+  })();
+</script>
+  <script>
+    const form = document.getElementById('authForm');
+    const nameWrap = document.getElementById('nameWrap');
+    const title = document.getElementById('formTitle');
+    const switchBtn = document.getElementById('switchBtn');
+    const submitText = document.getElementById('submitText');
+    let mode = 'login';
+    switchBtn.addEventListener('click', ()=>{ mode = mode==='login'?'signup':'login'; const signup = mode==='signup'; nameWrap.classList.toggle('hidden', !signup); title.textContent = signup ? 'Create your account' : 'Welcome back'; switchBtn.textContent = signup ? 'Have an account? →' : 'Need an account? →'; submitText.textContent = signup ? 'Sign up' : 'Login'; });
+    form.addEventListener('submit', (e)=>{ e.preventDefault(); window.location.href = 'dashboard.html'; });
+  </script>
+</body>
+</html>
