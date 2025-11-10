@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CosmosX — Volunteer Dashboard</title>
+  <meta name="color-scheme" content="light dark" />
+  <!-- theme bootstrap (apply before paint) -->
+  <script>
+    (function(){
+      try {
+        var KEY='theme';
+        var saved = localStorage.getItem(KEY);
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = saved || (prefersDark ? 'dark' : 'light');
+        var root = document.documentElement;
+        root.classList.toggle('dark', theme === 'dark');
+        root.setAttribute('data-theme', theme);
+        root.style.colorScheme = theme;
+      } catch(e){}
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: {
+        colors: { brand:{50:'#ecfdf5',100:'#d1fae5',200:'#a7f3d0',300:'#6ee7b7',400:'#34d399',500:'#10b981',600:'#059669',700:'#047857',800:'#065f46',900:'#064e3b'} },
+        boxShadow: { card:'0 8px 24px rgba(15,23,42,.08)' }
+      } }
+    }
+  </script>
+</head>
+<body class="antialiased text-slate-800 bg-slate-50 dark:bg-slate-950 dark:text-slate-100">
+
+  <div class="min-h-screen grid grid-cols-1 lg:grid-cols-[280px_1fr]">
+    <!-- SIDEBAR -->
+    <aside class="bg-white/90 dark:bg-slate-950/60 backdrop-blur border-r border-slate-200 dark:border-slate-800 hidden lg:flex flex-col">
+      <div class="h-16 px-6 flex items-center border-b border-slate-200 dark:border-slate-800">
+        <a href="index.html" class="flex items-center gap-3">
+          <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 text-white font-bold">CX</span>
+          <div><p class="font-semibold leading-tight">CosmosX</p><p class="text-xs text-slate-500">Eco‑Connect Hub</p></div>
+        </a>
+      </div>
+      <nav class="flex-1 p-4 space-y-1 text-sm">
+        <a href="#overview" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900">Overview</a>
+        <a href="#missions" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900">Missions</a>
+        <a href="#leaderboard" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900">Leaderboard</a>
+        <a href="#events" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900">Events</a>
+        <a href="#settings" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900">Settings</a>
+      </nav>
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500">
+        v1.0 • © <span id="yearSide"></span>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="flex flex-col">
+      <!-- TOPBAR -->
+      <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/70 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+        <div class="h-16 px-4 sm:px-6 lg:px-8 flex items-center gap-3">
+          <button id="sidebarToggle" class="lg:hidden inline-flex items-center justify-center rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-900" aria-label="Open Menu">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <nav class="hidden md:flex items-center text-sm text-slate-500">
+            <a href="index.html" class="hover:text-slate-700 dark:hover:text-slate-300">Home</a>
+            <span class="mx-2">/</span>
+            <a href="#overview" class="text-slate-900 dark:text-slate-100 font-medium">Volunteer Dashboard</a>
+          </nav>
+          <div class="flex-1"></div>
+          <button data-theme-toggle aria-label="Toggle dark mode" class="inline-flex items-center justify-center rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-900" title="Toggle theme">
+            <svg class="hidden h-5 w-5 dark:inline-block" viewBox="0 0 24 24" fill="currentColor"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"/></svg>
+            <svg class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+          </button>
+          <a href="auth.html" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900 text-sm">Logout</a>
+        </div>
+      </header>
+
+      <!-- CONTENT -->
+      <main id="overview" class="px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <!-- CONTROLS -->
+        <div class="flex flex-col lg:flex-row items-start lg:items-center gap-3 justify-between">
+          <div class="flex items-center gap-3">
+            <h2 class="text-2xl font-bold tracking-tight">Volunteer Dashboard</h2>
+            <span class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">Monthly Celebrity Meet</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="districtSelect" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 px-3 py-2 text-sm"></select>
+            <button class="inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900">Last 30d</button>
+          </div>
+        </div>
+
+        <!-- KPI CARDS -->
+        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-card p-5">
+            <p class="text-sm text-slate-500">Missions completed</p><p id="kpiMissions" class="mt-1 text-2xl font-semibold">—</p>
+            <svg viewBox="0 0 100 28" class="mt-3 w-full h-10"><polyline fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-500" points="0,22 10,20 20,18 30,16 40,15 50,14 60,12 70,10 80,8 90,6 100,5"/></svg>
+          </div>
+          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-card p-5">
+            <p class="text-sm text-slate-500">Points</p><p id="kpiPoints" class="mt-1 text-2xl font-semibold">—</p>
+            <div class="mt-3 h-2 rounded-full bg-slate-100 dark:bg-slate-800"><div class="h-2 w-2/3 rounded-full bg-emerald-500"></div></div>
+          </div>
+          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-card p-5">
+            <p class="text-sm text-slate-500">Avg pH</p><p id="kpiPh" class="mt-1 text-2xl font-semibold">—</p>
+            <div class="mt-3 h-2 rounded-full bg-slate-100 dark:bg-slate-800"><div class="h-2 w-[72%] rounded-full bg-amber-500"></div></div>
+          </div>
+          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-card p-5">
+            <p class="text-sm text-slate-500">Waste collected</p><p id="kpiWaste" class="mt-1 text-2xl font-semibold">—</p>
+            <svg viewBox="0 0 100 28" class="mt-3 w-full h-10"><rect x="4" y="10" width="10" height="12" class="fill-fuchsia-500"/><rect x="26" y="8" width="10" height="14" class="fill-fuchsia-500"/><rect x="48" y="6" width="10" height="16" class="fill-fuchsia-500"/><rect x="70" y="5" width="10" height="17" class="fill-fuchsia-500"/></svg>
+          </div>
+        </section>
+
+        <!-- UPCOMING EVENTS -->
+        <section id="events" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-card p-5">
+          <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h3 class="font-semibold">Upcoming Events</h3>
+              <p class="text-sm text-slate-500">Register now — fee ₹49</p>
+            </div>
+            <div class="text-xs text-slate-500">Click or press Enter/Space on an event</div>
+          </div>
+          <div id="eventsGrid" class="mt-4 grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- MAIN GRID -->
+        <section class="grid xl:grid-cols-3 gap-6 items-start">
+          <div class="xl:col-span-2 space-y-6">
+            <!-- Activity Chart (SVG area) -->
+            <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-card">
+              <div class="p-5 flex items-center justify-between">
+                <div><h3 class="font-semibold">Mission Activity</h3><p class="text-sm text-slate-500">Submissions per day</p></div>
+              </div>
+              <div class="px-5 pb-5">
+                <svg id="activityChart" viewBox="0 0 600 220" class="w-full h-56"></svg>
+              </div>
+            </div>
+
+            <!-- Recent Missions -->
+            <div id="missions" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-card overflow-hidden">
+              <div class="p-5 flex items-center justify-between">
+                <div><h3 class="font-semibold">Recent Missions</h3><p class="text-sm text-slate-500">Latest submissions</p></div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                  <thead class="bg-slate-50 dark:bg-slate-900"><tr>
+                    <th class="px-4 py-3 text-left">ID</th>
+                    <th class="px-4 py-3 text-left">Type</th>
+                    <th class="px-4 py-3 text-left">Location</th>
+                    <th class="px-4 py-3 text-left">Status</th>
+                    <th class="px-4 py-3 text-left">Submitted</th>
+                  </tr></thead>
+                  <tbody id="recentBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right rail: Leaderboard + Profile -->
+          <div class="space-y-6">
+            <div id="leaderboard" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-card">
+              <div class="p-5"><h3 class="font-semibold">Top 10 — <span id="lbDistrict">—</span></h3><p class="text-sm text-slate-500">Winners meet celebrity at month‑end</p></div>
+              <div class="max-h-96 overflow-auto">
+                <ul id="lbList" class="divide-y divide-slate-200 dark:divide-slate-800"></ul>
+              </div>
+              <div class="p-5 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500">Scores lock on the last day of each month at 23:59. Ties resolved by earliest submission.</div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-card p-5">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-800"></div>
+                <div><p class="font-semibold">Kishan</p><p class="text-xs text-slate-500">Volunteer • <span id="meDistrict">—</span></p></div>
+              </div>
+              <div class="mt-4 grid grid-cols-3 gap-3 text-center text-sm">
+                <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-3"><p class="text-xs text-slate-500">Points</p><p id="mePoints" class="font-semibold">—</p></div>
+                <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-3"><p class="text-xs text-slate-500">Rank</p><p id="meRank" class="font-semibold">—</p></div>
+                <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-3"><p class="text-xs text-slate-500">Badges</p><p id="meBadges" class="font-semibold">—</p></div>
+              </div>
+              <button id="editProfileBtn" class="mt-4 w-full inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900">Edit Profile</button>
+            </div>
+
+            <div id="joinedCard" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-card p-5">
+              <div class="flex items-center justify-between">
+                <h3 class="font-semibold">My Joined Events</h3>
+                <span id="joinedCount" class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800">0</span>
+              </div>
+              <ul id="joinedEventsList" class="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                <li class="text-xs text-slate-500">No events yet — join from the Upcoming Events section.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="py-6 border-t border-slate-200 dark:border-slate-800 px-4 sm:px-6 lg:px-8 text-sm text-slate-500">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p>© <span id="year"></span> CosmosX. All rights reserved.</p>
+          <div class="flex items-center gap-4"><a href="index.html" class="hover:underline">Home</a><a href="auth.html" class="hover:underline">Auth</a></div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- EVENT REGISTRATION + DUMMY PAYMENT MODAL -->
+  <div id="eventModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-slate-900/60"></div>
+    <div class="relative mx-auto max-w-lg mt-20 p-0 rounded-2xl overflow-hidden bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-card">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 id="eventTitle" class="font-semibold">Register</h3>
+          <p id="eventSubtitle" class="text-xs text-slate-500 mt-0.5">Fee: ₹49</p>
+        </div>
+        <button id="eventClose" type="button" class="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-900" aria-label="Close">✕</button>
+      </div>
+      <div class="p-5 space-y-5">
+        <!-- Step 1: Details -->
+        <form id="eventForm" class="grid gap-3">
+          <input id="regName" required placeholder="Full name" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-4 py-2.5" />
+          <input id="regEmail" required type="email" placeholder="Email" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-4 py-2.5" />
+          <input id="regDistrict" required placeholder="District" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-4 py-2.5" />
+          <button id="toPayment" type="button" class="mt-2 inline-flex justify-center items-center rounded-xl bg-brand-500 px-5 py-2.5 font-semibold text-white hover:bg-brand-600">Proceed to Payment (₹49)</button>
+        </form>
+
+        <!-- Step 2: Dummy Payment -->
+        <div id="paymentStep" class="hidden">
+          <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-4">
+            <p class="font-semibold">Dummy Payment Gateway</p>
+            <p class="text-xs text-slate-500">This is a sandbox screen. No real payment is processed.</p>
+            <div class="mt-3 grid gap-3 sm:grid-cols-2">
+              <div class="rounded-lg border border-slate-200 dark:border-slate-800 p-3">
+                <p class="text-sm font-medium">UPI</p>
+                <input id="upiId" placeholder="yourname@bank" class="mt-2 w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-3 py-2"/>
+              </div>
+              <div class="rounded-lg border border-slate-200 dark:border-slate-800 p-3">
+                <p class="text-sm font-medium">Card</p>
+                <input id="cardNum" placeholder="4111 1111 1111 1111" class="mt-2 w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-3 py-2"/>
+                <div class="mt-2 grid grid-cols-2 gap-2">
+                  <input id="cardExp" placeholder="MM/YY" class="rounded-lg border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-3 py-2"/>
+                  <input id="cardCvv" placeholder="CVV" class="rounded-lg border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-3 py-2"/>
+                </div>
+              </div>
+            </div>
+            <button id="payNow" type="button" class="mt-4 inline-flex justify-center items-center rounded-xl bg-brand-500 px-5 py-2.5 font-semibold text-white hover:bg-brand-600 w-full">Pay ₹49</button>
+          </div>
+          <p id="payNote" class="text-xs text-slate-500 mt-2">Use any dummy values. You’ll see a success state.</p>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div id="successStep" class="hidden text-center">
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">✓</div>
+          <h4 class="mt-3 text-lg font-semibold">Registration complete</h4>
+          <p class="text-sm text-slate-500">A confirmation email has been sent (dummy).</p>
+          <button id="doneBtn" type="button" class="mt-4 inline-flex justify-center items-center rounded-xl border border-slate-200 dark:border-slate-800 px-5 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-900">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE EDIT MODAL -->
+  <div id="profileModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-slate-900/60"></div>
+    <div class="relative mx-auto max-w-md mt-24 p-0 rounded-2xl overflow-hidden bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-card">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <h3 class="font-semibold">Edit Profile</h3>
+        <button id="profileClose" type="button" class="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-900" aria-label="Close">✕</button>
+      </div>
+      <form id="profileForm" class="p-5 grid gap-3">
+        <input id="pName" placeholder="Full name" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-4 py-2.5" />
+        <input id="pDistrict" placeholder="District" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-4 py-2.5" />
+        <input id="pPoints" placeholder="Points" type="number" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 px-4 py-2.5" />
+        <div class="flex gap-2 justify-end mt-2">
+          <button type="button" id="profileCancel" class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-900">Cancel</button>
+          <button type="submit" class="rounded-xl bg-brand-500 px-5 py-2 font-semibold text-white hover:bg-brand-600">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- theme runtime + app logic (runs AFTER DOM is present) -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      // theme runtime
+      (function(){
+        const KEY='theme';
+        const root=document.documentElement;
+        const mq=window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+        const get=()=>localStorage.getItem(KEY) || (mq && mq.matches ? 'dark' : 'light');
+        const apply=t=>{ root.classList.toggle('dark', t==='dark'); root.setAttribute('data-theme', t); root.style.colorScheme=t; document.querySelectorAll('[data-theme-toggle]').forEach(b=>b.setAttribute('aria-pressed', t==='dark')); };
+        const set=t=>{ localStorage.setItem(KEY, t); apply(t); };
+        apply(get());
+        document.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-theme-toggle]');
+          if(!btn) return;
+          const cur = get();
+          set(cur==='dark' ? 'light' : 'dark');
+        }, false);
+        mq && mq.addEventListener && mq.addEventListener('change', e=>{
+          if(!localStorage.getItem(KEY)) apply(e.matches ? 'dark' : 'light');
+        });
+      })();
+
+      document.getElementById('year').textContent = new Date().getFullYear();
+      document.getElementById('yearSide').textContent = new Date().getFullYear();
+      const sidebar = document.querySelector('aside');
+      document.getElementById('sidebarToggle')?.addEventListener('click',()=>{sidebar?.classList.toggle('hidden');sidebar?.classList.toggle('fixed');sidebar?.classList.toggle('inset-0');sidebar?.classList.toggle('z-50');});
+
+      // demo data for static HTML
+      const DISTRICTS = ['Bengaluru Urban','Bengaluru Rural','Mysuru','Udupi','Dharwad','Belagavi'];
+      const select = document.getElementById('districtSelect');
+      DISTRICTS.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;select.appendChild(o);});
+      select.value = DISTRICTS[0];
+      // KPIs
+      document.getElementById('kpiMissions').textContent = '1,842';
+      document.getElementById('kpiPoints').textContent = '12,480';
+      document.getElementById('kpiPh').textContent = '7.2';
+      document.getElementById('kpiWaste').textContent = '12.4t';
+      // me
+      document.getElementById('meDistrict').textContent = select.value;
+      document.getElementById('mePoints').textContent = '12,480';
+      document.getElementById('meRank').textContent = '42';
+      document.getElementById('meBadges').textContent = '6';
+      // leaderboard + recent
+      function makeLeaders(){return Array.from({length:10}).map((_,i)=>({rank:i+1,name:`${['A','B','C','D','E','F'][i%6]}. ${['Patel','Singh','Sharma','Rao','Shetty','Gowda'][i%6]}`,points:1000-i*40+Math.floor(Math.random()*30),missions:40-i*2+Math.floor(Math.random()*5)}));}
+      function renderLeaders(d){document.getElementById('lbDistrict').textContent=d;const list=document.getElementById('lbList');list.innerHTML='';makeLeaders().forEach(p=>{const li=document.createElement('li');li.className='px-5 py-3 flex items-center justify-between';li.innerHTML=`<div class="flex items-center gap-3"><span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 text-xs font-semibold">${p.rank}</span><div><p class="font-medium">${p.name}</p><p class="text-xs text-slate-500">${p.missions} missions</p></div></div><span class="font-semibold">${p.points}</span>`;list.appendChild(li);});}
+      renderLeaders(select.value);
+      select.addEventListener('change',()=>{document.getElementById('meDistrict').textContent=select.value;renderLeaders(select.value);});
+
+      // simple activity area
+      (function(){const svg=document.getElementById('activityChart');const path=document.createElementNS('http://www.w3.org/2000/svg','path');const poly=document.createElementNS('http://www.w3.org/2000/svg','polyline');const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');const grad=document.createElementNS('http://www.w3.org/2000/svg','linearGradient');grad.setAttribute('id','g1');grad.setAttribute('x1','0');grad.setAttribute('x2','0');grad.setAttribute('y1','0');grad.setAttribute('y2','1');const s1=document.createElementNS('http://www.w3.org/2000/svg','stop');s1.setAttribute('offset','5%');s1.setAttribute('stop-color','#10b981');s1.setAttribute('stop-opacity','0.35');const s2=document.createElementNS('http://www.w3.org/2000/svg','stop');s2.setAttribute('offset','95%');s2.setAttribute('stop-color','#10b981');s2.setAttribute('stop-opacity','0');grad.appendChild(s1);grad.appendChild(s2);defs.appendChild(grad);svg.appendChild(defs);path.setAttribute('d','M0,180 L40,170 L80,160 L120,150 L160,140 L200,138 L240,135 L280,120 L320,115 L360,110 L400,90 L440,70 L480,85 L520,95 L560,80 L600,70 L600,220 L0,220 Z');path.setAttribute('fill','url(#g1)');poly.setAttribute('fill','none');poly.setAttribute('stroke','#10b981');poly.setAttribute('stroke-width','3');poly.setAttribute('points','0,180 40,170 80,160 120,150 160,140 200,138 240,135 280,120 320,115 360,110 400,90 440,70 480,85 520,95 560,80 600,70');svg.appendChild(path);svg.appendChild(poly);})();
+
+      // ===== Upcoming Events (static demo) =====
+      const EVENTS = [
+        { id:'ev1', title:'Lake Cleanup Drive', date:'Dec 05, 2025', where:'Ulsoor Lake', tag:'Waste Cleanup' },
+        { id:'ev2', title:'Water pH Survey', date:'Dec 12, 2025', where:'Cubbon Park', tag:'Water Test' },
+        { id:'ev3', title:'Biodiversity Walk', date:'Dec 19, 2025', where:'Bannerghatta', tag:'Biodiversity' },
+        { id:'ev4', title:'Plastic Audit Marathon', date:'Jan 03, 2026', where:'MG Road', tag:'Audit' },
+        { id:'ev5', title:'Tree Census 2026', date:'Jan 10, 2026', where:'JP Nagar', tag:'Census' },
+        { id:'ev6', title:'Yamuna Wetland Watch', date:'Jan 17, 2026', where:'Yelahanka', tag:'Wetlands' },
+      ];
+      const eventsGrid = document.getElementById('eventsGrid');
+      if (eventsGrid) {
+        EVENTS.forEach(ev => {
+          const card = document.createElement('div');
+          card.className = 'cursor-pointer text-left rounded-2xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-950 hover:bg-slate-50 dark:hover:bg-slate-900 transition outline-none';
+          card.setAttribute('data-ev', ev.id);
+          card.setAttribute('role', 'button');
+          card.setAttribute('tabindex', '0');
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <p class="font-semibold">${ev.title}</p>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800">${ev.tag}</span>
+            </div>
+            <p class="mt-1 text-sm text-slate-500">${ev.date} • ${ev.where}</p>
+            <p class="mt-2 text-xs text-slate-500">Click or press Enter/Space — ₹49</p>
+          `;
+          eventsGrid.appendChild(card);
+        });
+      }
+
+      // ===== Joined Events persistence =====
+      let CURRENT_EVENT_ID = null;
+      function saveJoinedEvent(evId){
+        const ev = EVENTS.find(e => e.id === evId);
+        if(!ev) return;
+        const store = JSON.parse(localStorage.getItem('profile') || '{}');
+        const list = Array.isArray(store.eventsJoined) ? store.eventsJoined : [];
+        if(!list.find(x => x.id === evId)){
+          list.push({ id: ev.id, title: ev.title, date: ev.date, where: ev.where, joinedAt: new Date().toISOString() });
+        }
+        store.eventsJoined = list;
+        localStorage.setItem('profile', JSON.stringify(store));
+        renderJoinedEvents(list);
+      }
+      function renderJoinedEvents(list){
+        const L = list || (JSON.parse(localStorage.getItem('profile') || '{}').eventsJoined || []);
+        const ul = document.getElementById('joinedEventsList');
+        const count = document.getElementById('joinedCount');
+        if(!ul || !count) return;
+        ul.innerHTML = '';
+        count.textContent = L.length;
+        if(L.length === 0){
+          ul.innerHTML = '<li class="text-xs text-slate-500">No events yet — join from the Upcoming Events section.</li>';
+          return;
+        }
+        L.slice().reverse().forEach(ev => {
+          const li = document.createElement('li');
+          li.className = 'rounded-xl border border-slate-200 dark:border-slate-800 p-3';
+          li.innerHTML = `<div class="flex items-center justify-between">
+              <div>
+                <p class="font-medium">${ev.title}</p>
+                <p class="text-xs text-slate-500">${ev.date} • ${ev.where}</p>
+              </div>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">Joined</span>
+            </div>`;
+          ul.appendChild(li);
+        });
+      }
+
+      // ===== Event Modal / Payment Flow =====
+      const modal = document.getElementById('eventModal');
+      const eventTitle = document.getElementById('eventTitle');
+      const eventSubtitle = document.getElementById('eventSubtitle');
+      const eventClose = document.getElementById('eventClose');
+      const eventForm = document.getElementById('eventForm');
+      const toPayment = document.getElementById('toPayment');
+      const paymentStep = document.getElementById('paymentStep');
+      const successStep = document.getElementById('successStep');
+      const doneBtn = document.getElementById('doneBtn');
+
+      function openEvent(evId){ CURRENT_EVENT_ID = evId;
+        const ev = EVENTS.find(e => e.id === evId);
+        if(!ev) return;
+        eventTitle.textContent = 'Register — ' + ev.title;
+        eventSubtitle.textContent = `When: ${ev.date} • Where: ${ev.where} • Fee: ₹49`;
+        modal.classList.remove('hidden');
+        // reset steps
+        successStep.classList.add('hidden');
+        paymentStep.classList.add('hidden');
+        eventForm.classList.remove('hidden');
+        eventForm.reset();
+      }
+      function closeEvent(){ modal.classList.add('hidden'); }
+
+      // Click or keyboard activation on event cards
+      function activateEvent(evId) { if (!evId) return; openEvent(evId); }
+      eventsGrid?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-ev]');
+        if (!btn) return;
+        activateEvent(btn.getAttribute('data-ev'));
+      });
+      eventsGrid?.addEventListener('keydown', (e) => {
+        const btn = e.target.closest('[data-ev]');
+        if (!btn) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          activateEvent(btn.getAttribute('data-ev'));
+        }
+      });
+
+      eventClose?.addEventListener('click', closeEvent);
+      doneBtn?.addEventListener('click', closeEvent);
+
+      toPayment?.addEventListener('click', (e)=>{
+        e.preventDefault();
+        if (!eventForm.reportValidity()) return;
+        eventForm.classList.add('hidden');
+        paymentStep.classList.remove('hidden');
+      });
+
+      document.getElementById('payNow')?.addEventListener('click', ()=>{
+        // Simulate payment processing
+        const btn = document.getElementById('payNow');
+        btn.disabled = true; btn.textContent = 'Processing…';
+        setTimeout(()=>{
+          btn.disabled = false; btn.textContent = 'Pay ₹49';
+          paymentStep.classList.add('hidden');
+          successStep.classList.remove('hidden');
+          if(CURRENT_EVENT_ID){ saveJoinedEvent(CURRENT_EVENT_ID); }
+        }, 1100);
+      });
+
+      // ===== Profile Edit (localStorage) =====
+      const editBtn = document.getElementById('editProfileBtn');
+      const profileModal = document.getElementById('profileModal');
+      const profileClose = document.getElementById('profileClose');
+      const profileCancel = document.getElementById('profileCancel');
+      const pName = document.getElementById('pName');
+      const pDistrict = document.getElementById('pDistrict');
+      const pPoints = document.getElementById('pPoints');
+
+      function openProfile(){
+        const stored = JSON.parse(localStorage.getItem('profile') || '{}');
+        pName.value = stored.name || 'Kishan';
+        pDistrict.value = stored.district || document.getElementById('meDistrict').textContent || '';
+        pPoints.value = stored.points || document.getElementById('mePoints').textContent.replace(/,/g,'') || '';
+        profileModal.classList.remove('hidden');
+      }
+      function closeProfile(){ profileModal.classList.add('hidden'); }
+
+      editBtn?.addEventListener('click', openProfile);
+      profileClose?.addEventListener('click', closeProfile);
+      profileCancel?.addEventListener('click', (e)=>{ e.preventDefault(); closeProfile(); });
+
+      document.getElementById('profileForm')?.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const data = {
+          name: pName.value.trim() || 'Kishan',
+          district: pDistrict.value.trim() || document.getElementById('meDistrict').textContent,
+          points: parseInt(pPoints.value, 10) || 0
+        };
+        localStorage.setItem('profile', JSON.stringify(data));
+        // reflect on page
+        const nameEl = document.querySelector('#leaderboard + .rounded-2xl .font-semibold');
+        if(nameEl) nameEl.textContent = data.name;
+        document.getElementById('meDistrict').textContent = data.district;
+        document.getElementById('mePoints').textContent = data.points.toLocaleString('en-IN');
+        closeProfile();
+      });
+
+      // Load persisted profile on startup
+      (function(){
+        const stored = JSON.parse(localStorage.getItem('profile') || '{}');
+        if(stored.name){ const nameEl = document.querySelector('#leaderboard + .rounded-2xl .font-semibold'); if(nameEl) nameEl.textContent = stored.name; }
+        if(stored.district){ document.getElementById('meDistrict').textContent = stored.district; }
+        if(stored.points){ document.getElementById('mePoints').textContent = Number(stored.points).toLocaleString('en-IN'); }
+        // Render previously joined events if any
+        renderJoinedEvents();
+      })();
+    });
+  </script>
+w
+</body>
+</html>
