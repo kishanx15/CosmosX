@@ -1,1088 +1,246 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GURUKUL • Swadeshi Learning</title>
-  <meta name="color-scheme" content="light dark">
+  <title>CosmosX — Eco‑Connect Hub</title>
+  <meta name="description" content="CosmosX turns environmental anxiety into measurable, youth‑powered action with TEK + gamification." />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌿</text></svg>">
+  <script>
+  (function(){
+    try {
+      var KEY='theme';
+      var saved = localStorage.getItem(KEY);
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var theme = saved || (prefersDark ? 'dark' : 'light');
+      var root = document.documentElement;
+      root.classList.toggle('dark', theme === 'dark');
+      root.setAttribute('data-theme', theme);
+      root.style.colorScheme = theme;
+    } catch(e){}
+  })();
+</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {50:'#ecfdf5',100:'#d1fae5',200:'#a7f3d0',300:'#6ee7b7',400:'#34d399',500:'#10b981',600:'#059669',700:'#047857',800:'#065f46',900:'#064e3b'},
+            ink: { 50:'#f8fafc', 900:'#0b1220' }
+          },
+          boxShadow: { card:'0 10px 30px rgba(2,6,23,.10)', soft:'0 8px 24px rgba(15,23,42,.08)' },
+          borderRadius: { '2xl':'1rem', '3xl':'1.5rem' }
+        }
+      }
+    }
+  </script>
   <style>
-    /* ===================== THEME ===================== */
-    :root{
-      --bg:#0b0906; --bg-soft:#1a140e; --card:#16110c;
-      --text:#efeadf; --muted:#cdbfa8;
-      --gold:#f5c565; --gold-2:#ffb84a; --gold-3:#ffc86b;
-      --ring: rgba(255,196,102,.4);
-      --shadow: 0 10px 30px rgba(0,0,0,.45);
-      --glow: 0 0 32px rgba(255,196,102,.45), 0 0 90px rgba(255,161,54,.25);
-      --border: rgba(255,210,120,.16);
-      --border-strong: rgba(255,210,120,.28);
-      --ok:#39d98a; --warn:#f5c565; --bad:#ff7474;
-      --headerH: 60px;
-    }
-    [data-theme="light"]{
-      --bg:#fffaf2; --bg-soft:#fff4e2; --card:#ffffff;
-      --text:#2a1c07; --muted:#7b6a50;
-      --gold:#b87300; --gold-2:#cc8b1a; --gold-3:#e4a63a;
-      --ring: rgba(184,115,0,.28);
-      --shadow: 0 8px 24px rgba(160,110,0,.12);
-      --glow: 0 0 28px rgba(232,170,60,.20), 0 0 60px rgba(232,170,60,.12);
-      --border: rgba(184,115,0,.16);
-      --border-strong: rgba(184,115,0,.28);
-    }
-
-    /* ===================== BASE ===================== */
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, Segoe UI, Inter, Roboto, Arial;
-      color:var(--text);
-      background: radial-gradient(1100px 600px at 50% 10%, #22180f 0%, var(--bg) 65%);
-      overflow-x:hidden;
-    }
-    [data-theme="light"] body{
-      background: radial-gradient(1000px 560px at 50% 0%, #ffe9c7 0%, var(--bg) 60%);
-    }
-    a{color:inherit; text-decoration:none}
-    img{max-width:100%; display:block}
-    button{font:inherit}
-    .container{width:min(1180px, 92vw); margin-inline:auto}
-    .sr{position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden}
-
-    /* ===================== AMBIENCE ===================== */
-    .stage{position:fixed; inset:0; pointer-events:none; z-index:-1}
-    .vignette{position:absolute; inset:0; background:
-      radial-gradient(1200px 800px at 50% 10%, transparent 0 50%, rgba(0,0,0,.65) 90%)}
-    [data-theme="light"] .vignette{background:
-      radial-gradient(1200px 800px at 50% 10%, transparent 0 60%, rgba(0,0,0,.10) 90%)}
-    .pillars{
-      position:absolute; inset:-10% -10% 0 -10%; opacity:.20; filter:saturate(.6) contrast(1.05);
-      background:url('https://images.unsplash.com/photo-1582560475093-8a1534f17f8d?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
-      mask-image: linear-gradient(#000, rgba(0,0,0,.5) 70%, transparent 100%);
-      transform: translate3d(0,0,0);
-    }
-    .embers{position:absolute; inset:0; pointer-events:none}
-    .embers:before,.embers:after{
-      content:""; position:absolute; inset:0;
-      background:
-        radial-gradient(350px 250px at 50% 70%, rgba(255,168,64,.15), transparent 60%),
-        radial-gradient(700px 500px at 50% -10%, rgba(255,210,120,.18), transparent 60%);
-      animation: float 12s ease-in-out infinite alternate;
-    }
-    @keyframes float{from{transform: translateY(-10px)} to{transform: translateY(10px)}}
-
-    /* ===================== HEADER ===================== */
-    header{
-      position:sticky; top:0; z-index:50; backdrop-filter: blur(10px);
-      background: linear-gradient(to bottom, rgba(15,10,6,.75), rgba(15,10,6,.35));
-      border-bottom:1px solid var(--border);
-    }
-    [data-theme="light"] header{
-      background: linear-gradient(to bottom, rgba(255,242,220,.85), rgba(255,242,220,.55));
-    }
-    .nav{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0}
-    .brand{display:flex; align-items:center; gap:12px}
-    .seal{width:36px; height:36px; border-radius:50%;
-      background: radial-gradient(circle at 35% 35%, #fff2d1 0%, #ffd17a 35%, #a35a13 80%);
-      box-shadow: var(--glow)}
-    [data-theme="light"] .seal{background: radial-gradient(circle at 35% 35%, #ffe9c7 0%, #ffc86b 35%, #b87400 80%)}
-    .brand h1{font-family: 'Georgia', ui-serif, serif; letter-spacing:.18em; font-size:20px; margin:0}
-
-    nav ul{display:flex; gap:22px; list-style:none; margin:0; padding:0; align-items:center}
-    nav a{opacity:.9; padding:6px 4px; border-bottom:2px solid transparent}
-    nav a.active{opacity:1; border-bottom-color: var(--gold-2)}
-    nav a:hover{opacity:1}
-
-    .btn{
-      display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:12px;
-      border:1px solid var(--border-strong); cursor:pointer; user-select:none;
-      background: linear-gradient(180deg, #ffd89a, #f7b24f); color:#3a2300; font-weight:600; box-shadow: var(--glow)
-    }
-    .btn.ghost{background: transparent; color:var(--text); border-color: var(--border-strong)}
-    .btn.flat{background: rgba(255,196,102,.12); color:#f4d8a4; border-color: var(--border); box-shadow:none}
-    [data-theme="light"] .btn.flat{color:#6a4a05; background: rgba(184,115,0,.08)}
-    .btn.bad{border-color:rgba(255,0,0,.25); background:rgba(255,0,0,.1)}
-    .icon-btn{border:1px solid var(--border-strong); border-radius:12px; padding:10px; background:transparent; display:inline-flex}
-    .bar{width:22px; height:2px; background: currentColor; display:block; border-radius:1px}
-    .bar+.bar{margin-top:5px}
-
-    .menu{display:none; position:absolute; left:0; right:0; top:100%; background:var(--bg); border-bottom:1px solid var(--border)}
-    .menu a{display:block; padding:12px 20px; border-top:1px solid var(--border); opacity:.95}
-    .menu.open{display:block}
-
-    /* ===================== HERO / SECTIONS ===================== */
-    .hero{position:relative; min-height: 96svh; display:grid; place-items:center; text-align:center; overflow:hidden}
-    .rings:before, .rings:after{
-      content:""; position:absolute; left:50%; top:64%; width:120vmin; height:120vmin; translate:-50% -50%; border-radius:50%;
-      box-shadow: inset 0 0 0 1px rgba(255,196,102,.15), inset 0 0 60px rgba(255,140,0,.12);
-      animation: pulse 9s ease-in-out infinite;
-    }
-    .rings:after{width:160vmin; height:160vmin; top:68%; box-shadow: inset 0 0 0 1px rgba(255,196,102,.1)}
-    @keyframes pulse{0%,100%{transform: scale(1)} 50%{transform: scale(1.03)}}
-
-    .hero h2{font-family: 'Georgia', ui-serif, serif; font-weight:700; letter-spacing:.12em; font-size: clamp(40px, 6vw, 72px); margin:18px 0 6px}
-    .hero .tagline{font-size: clamp(16px, 1.6vw, 20px); color: var(--muted)}
-    .hero .sub{margin:10px auto 20px; color:#e6d8bf; max-width: 760px}
-    [data-theme="light"] .hero .sub{color:#6a4a05}
-    .guru{ width:min(360px, 48vw); margin-inline:auto; filter: drop-shadow(0 0 22px rgba(255,176,72,.45)) drop-shadow(0 0 60px rgba(255,160,54,.18)); }
-
-    section{padding: 78px 0}
-    .head{ text-align:center; margin-bottom: 18px }
-    .title{ font-family: 'Georgia', ui-serif, serif; font-size: clamp(28px, 3.2vw, 44px); margin:0 }
-    .lead{ color:var(--muted); margin:6px 0 0 }
-
-    .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:16px }
-    .feature{
-      grid-column: span 3; background: linear-gradient(180deg, rgba(255,196,102,.08), rgba(255,196,102,.03));
-      border:1px solid var(--border); border-radius:16px; padding:16px; box-shadow: var(--shadow); position:relative; overflow:hidden
-    }
-    .feature h4{ margin:10px 0 6px }
-    .feature p{ margin:0; color:var(--muted) }
-    .feature .cta-mini{margin-top:10px}
-
-    .panel{
-      background: linear-gradient(180deg, rgba(255,196,102,.06), rgba(255,196,102,.02));
-      border:1px solid var(--border); border-radius:18px; box-shadow: var(--shadow); padding:18px
-    }
-    .cols{ display:grid; grid-template-columns: 2.2fr 1fr; gap:16px }
-    .stats{ display:grid; grid-template-columns: repeat(3, 1fr); gap:12px }
-    .stat{ background: rgba(255,196,102,.08); border:1px solid var(--border); border-radius:12px; padding:12px; text-align:center }
-    .stat b{ font-size:22px; color:#ffdfa6 }
-    [data-theme="light"] .stat b{color:#b87300}
-
-    .chip{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background: rgba(255,196,102,.12); border:1px solid var(--border); color:#f2d6a2 }
-    [data-theme="light"] .chip{color:#76510a}
-
-    footer{ padding:40px 0 60px; border-top:1px solid var(--border); margin-top:40px }
-
-    /* ===================== MODALS ===================== */
-    .overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; padding:20px}
-    .overlay.open{display:flex}
-    .modal{background:var(--card); color:var(--text); width:min(920px, 94vw); border-radius:16px; border:1px solid var(--border); box-shadow: var(--shadow)}
-    .modal header{position:sticky; top:0; background:transparent; border-bottom:1px solid var(--border); padding:14px 16px}
-    .modal .body{padding:16px; max-height:70vh; overflow:auto}
-    .modal .footer{border-top:1px solid var(--border); padding:12px 16px; display:flex; gap:10px; justify-content:end}
-    .x{border:none; background:transparent; font-size:20px; line-height:1; cursor:pointer; color:var(--text)}
-
-    .schedule-grid{
-      display:grid; grid-template-columns: 110px repeat(7, 1fr); gap:8px; align-items:center; overflow:auto; padding-bottom:6px
-    }
-    .schedule-grid .h{font-weight:700; text-align:center}
-    .slot{border:1px dashed var(--border); border-radius:10px; padding:8px; text-align:center; cursor:pointer; user-select:none}
-    .slot.on{background:rgba(255,196,102,.15); border-style:solid}
-
-    .reveal{opacity:0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease}
-    .reveal.in{opacity:1; transform:none}
-
-    .to-top{position:fixed; right:18px; bottom:18px; display:none}
-    .to-top.show{display:inline-flex}
-
-    @media print{
-      body{background:white; color:black}
-      header, .stage, .to-top, .overlay, #stickyTag{display:none !important}
-      section{padding:0}
-      #printArea{display:block !important}
-    }
-
-    @media (max-width: 1024px){
-      nav ul{ display:none }
-      .feature{ grid-column: span 6 }
-      .cols{ grid-template-columns: 1fr }
-    }
-    @media (max-width: 680px){
-      .feature{ grid-column: span 12 }
-      .btn{padding:10px 14px}
-    }
-
-    /* Canvas height with aspect-ratio */
-    canvas { height: auto; }
+    .glass { background: rgba(255,255,255,.7); backdrop-filter: blur(8px); }
+    .glass-dark { background: rgba(2,6,23,.6); backdrop-filter: blur(8px); }
   </style>
 </head>
-<body>
-  <!-- ===== Ambient background ===== -->
-  <div class="stage" aria-hidden="true">
-    <div class="pillars"></div>
-    <div class="embers"></div>
-    <div class="vignette"></div>
-  </div>
+<body class="antialiased text-slate-800 bg-white dark:bg-slate-950 dark:text-slate-100">
 
-  <!-- ===== Header / Nav ===== -->
-  <header id="siteHeader">
-    <div class="container nav">
-      <a class="brand" href="#home" aria-label="Go to home">
-        <div class="seal" aria-hidden="true"></div>
-        <h1>GURUKUL</h1>
+  <!-- TOP NAV -->
+  <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/70 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-2 font-semibold">
+        <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white">CX</span>
+        <span>CosmosX</span>
       </a>
-
-      <nav aria-label="Primary">
-        <ul id="mainNav">
-          <li><a href="#features">Features</a></li>
-          <li><a href="#guilds">Guilds</a></li>
-          <li><a href="#notes">Notes</a></li>
-          <li><a href="#vision">Vision</a></li>
-          <li><a href="#join">Join</a></li>
-        </ul>
+      <nav class="hidden md:flex items-center gap-6 text-sm ml-2">
+        <a href="#pillars" class="hover:text-brand-600">Pillars</a>
+        <a href="#impact" class="hover:text-brand-600">Impact</a>
+        <a href="#how-it-works" class="hover:text-brand-600">How it works</a>
+        <a href="#faq" class="hover:text-brand-600">FAQ</a>
+        <a href="#partners" class="hover:text-brand-600">Partners</a>
       </nav>
-
-      <div style="display:flex; gap:8px; align-items:center">
-        <button class="icon-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">🌗</button>
-        <button class="btn" id="launch">Launch Gurukul</button>
-        <button class="btn ghost" id="demo">Explore Demo</button>
-        <button class="icon-btn" id="menuBtn" aria-label="Open menu" title="Menu" style="display:none">
-          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-        </button>
-      </div>
-    </div>
-    <div class="menu" id="menuPanel" role="dialog" aria-modal="true" aria-label="Mobile">
-      <a href="#features">Features</a>
-      <a href="#guilds">Guilds</a>
-      <a href="#notes">Notes</a>
-      <a href="#vision">Vision</a>
-      <a href="#join">Join</a>
+      <div class="flex-1"></div>
+      <a href="auth.html" class="hidden sm:inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900">Login / Sign up</a>
+      <button data-theme-toggle aria-label="Toggle dark mode" class="inline-flex items-center justify-center rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-900" title="Toggle theme">
+        <svg class="hidden h-5 w-5 dark:inline-block" viewBox="0 0 24 24" fill="currentColor"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"/></svg>
+        <svg class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+      </button>
     </div>
   </header>
 
-  <!-- Sticky section tag -->
-  <div id="stickyTag" class="chip" style="position:fixed; left:14px; top:calc(var(--headerH) + 10px); z-index:45; display:none;">Home</div>
-
-  <!-- ===== HERO ===== -->
-  <section class="hero rings" id="home">
-    <div class="container reveal">
-      <svg class="guru" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs><radialGradient id="g" cx="50%" cy="45%" r="60%">
-          <stop offset="0%" stop-color="#fff3cc"/><stop offset="60%" stop-color="#ffc86b"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient>
-        </defs>
-        <circle cx="100" cy="100" r="70" fill="url(#g)" opacity=".35"/>
-        <path d="M100 45c10 0 18 8 18 18s-8 18-18 18-18-8-18-18 8-18 18-18zm-35 88c12-10 28-16 35-16s23 6 35 16l-12 16H77l-12-16z" fill="#ffd072" opacity=".95"/>
-        <circle cx="100" cy="56" r="6" fill="#fff0d5"/>
-      </svg>
-      <h2>GURUKUL</h2>
-      <div class="tagline">Where Learning Lives</div>
-      <p class="sub">Ancient Wisdom. AI Precision. A Swadeshi Learning Revolution.</p>
-      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap">
-        <button class="btn" data-scroll="#tutor">Launch Gurukul</button>
-        <button class="btn ghost" data-scroll="#features">Explore Demo</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== FEATURES ===== -->
-  <section id="features" class="container">
-    <div class="head reveal">
-      <h3 class="title">Swadeshi Features</h3>
-      <p class="lead">AI meets ancient Indian wisdom</p>
-    </div>
-    <div class="grid">
-      <article class="feature reveal">
-        <div class="chip">Guru Ji AI</div>
-        <h4>Interactive guidance</h4>
-        <p>Ask scholarly questions, get concise answers.</p>
-        <button class="btn flat cta-mini" data-scroll="#tutor">Try Chat</button>
-      </article>
-      <article class="feature reveal">
-        <div class="chip">Schedule Maker</div>
-        <h4>Personal study plan</h4>
-        <p>Toggle slots, save, export & import.</p>
-        <button class="btn flat cta-mini" id="openSchedule">Open Builder</button>
-      </article>
-      <article class="feature reveal">
-        <div class="chip">Guild Hub</div>
-        <h4>Clans & rankings</h4>
-        <p>Join/Leave, live activity ticker.</p>
-        <button class="btn flat cta-mini" data-scroll="#guilds">View Hub</button>
-      </article>
-      <article class="feature reveal">
-        <div class="chip">Concise Notes</div>
-        <h4>High-yield notes</h4>
-        <p>Search, quiz, and print to PDF.</p>
-        <button class="btn flat cta-mini" data-scroll="#notes">Open Notes</button>
-      </article>
-    </div>
-  </section>
-
-  <!-- ===== GUILD HUB ===== -->
-  <section id="guilds" class="container">
-    <div class="head reveal">
-      <h3 class="title">Guild Hub</h3>
-    </div>
-    <div class="panel reveal">
-      <div class="cols">
-        <div>
-          <div class="panel" style="background:rgba(255,196,102,.05)">
-            <div style="display:flex; align-items:center; gap:12px">
-              <div class="chip" id="guildName">InventorsIndia</div>
-              <div class="chip" id="guildStreak">Streak 16</div>
-            </div>
-            <div style="margin-top:12px" class="stats">
-              <div class="stat"><div>Knowledge</div><b id="statKnowledge">85%</b></div>
-              <div class="stat"><div>Focus</div><b id="statFocus">72%</b></div>
-              <div class="stat"><div>Streak</div><b id="statStreak">15</b></div>
-            </div>
+  <!-- HERO -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10 bg-gradient-to-b from-brand-50 via-white to-white dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"></div>
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <p class="text-sm font-semibold text-brand-600">Eco‑Connect Hub</p>
+        <h1 class="mt-2 text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">Turn TEK + Missions into measurable city‑scale impact</h1>
+        <p class="mt-4 text-lg text-slate-600 dark:text-slate-300">Mobilize volunteers, map insights, and celebrate the top 10 in every district with a celebrity meet at month‑end.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#how-it-works" class="inline-flex items-center rounded-xl bg-brand-500 px-5 py-3 font-semibold text-white shadow-soft hover:bg-brand-600">Explore how it works</a>
+          <a href="auth.html" class="inline-flex items-center rounded-xl border border-slate-300 px-5 py-3 font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-900">Login / Sign up</a>
+        </div>
+        <div class="mt-10 grid grid-cols-3 gap-4 text-center">
+          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-950 shadow-soft">
+            <p class="text-xs text-slate-500">Missions run</p><p class="text-2xl font-semibold mt-1">1,842</p>
           </div>
-          <div class="panel" style="margin-top:12px">
-            <div style="display:flex; justify-content:space-between; align-items:center">
-              <b>Activity Feed</b>
-              <span class="chip">Live</span>
-            </div>
-            <ul style="margin:10px 0 0; padding-left:18px; color:var(--muted)" id="feed">
-              <li>Priya solved 3 quizzes</li>
-              <li>Arjun reached Streak 20</li>
-              <li>New guild challenge unlocked</li>
-            </ul>
+          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-950 shadow-soft">
+            <p class="text-xs text-slate-500">Active volunteers</p><p class="text-2xl font-semibold mt-1">2,134</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-950 shadow-soft">
+            <p class="text-xs text-slate-500">Data points</p><p class="text-2xl font-semibold mt-1">98k</p>
           </div>
         </div>
-        <aside>
-          <div class="panel">
-            <b>Top Guilds</b>
-            <ol style="margin:10px 0 0; padding-left:18px" id="topGuilds">
-              <li>InventorsIndia</li>
-              <li>SmartMonks</li>
-              <li>CodeCrafters</li>
-            </ol>
-          </div>
-          <div class="panel" style="margin-top:12px">
-            <b>Quick Actions</b>
-            <p class="lead" style="margin-top:6px">Join/leave and earn karma.</p>
-            <div style="display:flex; gap:8px">
-              <button class="btn flat" id="joinBtn" style="flex:1">Join</button>
-              <button class="btn flat bad" id="leaveBtn" style="flex:1">Leave</button>
-            </div>
-            <div id="joinMsg" class="lead" style="display:none; margin-top:8px">✅ Joined <b>InventorsIndia</b>! Karma +20</div>
-            <div id="leaveMsg" class="lead" style="display:none; margin-top:8px">👋 Left guild. Karma -5</div>
-          </div>
-        </aside>
       </div>
-    </div>
-  </section>
-
-  <!-- ===== DASHBOARD ===== -->
-  <section class="container" id="dashboard">
-    <div class="panel reveal">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px">
-        <div style="display:flex; align-items:center; gap:12px">
-          <div style="width:56px;height:56px;border-radius:50%;background:url('https://i.pravatar.cc/112?img=48') center/cover" aria-hidden="true"></div>
-          <div>
-            <b id="studentName">Riya Sharma</b>
-            <div class="lead">Level <span id="level">12</span> • Guild: <span id="currentGuild">—</span></div>
-          </div>
+      <div>
+        <div class="aspect-[4/3] rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-soft">
+          <img src="https://placehold.co/900x650/png?text=Eco-Connect+Hub" class="h-full w-full object-cover" alt="CosmosX overview" />
         </div>
-        <span class="chip">Student Progress Dashboard</span>
-      </div>
-      <div class="stats" style="margin-top:12px">
-        <div class="stat"><div>Knowledge</div><b id="pKnowledge">85%</b></div>
-        <div class="stat"><div>Focus</div><b id="pFocus">72%</b></div>
-        <div class="stat"><div>Engagement</div><b id="pEngage">91%</b></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== AI TUTOR ===== -->
-  <section id="tutor" class="container">
-    <div class="head reveal">
-      <h3 class="title">AI TUTOR</h3>
-      <p class="lead">Your Personal Interactive Guide</p>
-    </div>
-    <div class="panel reveal" style="display:grid; gap:12px">
-      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center">
-        <button class="btn" id="startChat">New Chat</button>
-        <button class="btn ghost" id="voiceAssist">Voice Assistant</button>
-        <span id="vaStatus" class="chip" style="display:none">Listening…</span>
-      </div>
-      <div id="chatBox" style="border:1px solid var(--border); border-radius:12px; padding:10px; background:var(--bg-soft); max-height:340px; overflow:auto">
-        <div class="lead">Say hi to Guru Ji 👋</div>
-      </div>
-      <form id="chatForm" style="display:flex; gap:8px">
-        <input id="chatInput" placeholder="Ask anything (e.g., Quadratic formula)" required
-               style="flex:1; padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text)">
-        <button class="btn" type="submit">Send</button>
-      </form>
-    </div>
-  </section>
-
-  <!-- ===== 3D LEARNING: Exhibition Concept Cube ===== -->
-  <section id="vision" class="container">
-    <div class="panel reveal" style="text-align:center">
-      <div class="head" style="margin:0 0 10px">
-        <h3 class="title">3D LEARNING — Concept Cube</h3>
-        <p class="lead">Drag to orbit • inertia • autoplay tour • fullscreen • screenshot</p>
-      </div>
-      <div id="spaceWrap" style="position:relative; width:min(1000px,100%); margin-inline:auto; aspect-ratio:16/9; border-radius:12px; border:1px solid var(--border); overflow:hidden">
-        <canvas id="stars" style="position:absolute; inset:0; display:block"></canvas>
-        <canvas id="scene" style="position:absolute; inset:0; display:block"></canvas>
-        <div style="position:absolute; right:10px; top:10px; display:flex; gap:8px; flex-wrap:wrap">
-          <button class="btn flat" id="spin">Play</button>
-          <button class="btn flat" id="pause3d">Pause</button>
-          <button class="btn flat" id="reset3d">Reset</button>
-          <button class="btn flat" id="fsBtn">Fullscreen</button>
-          <button class="btn flat" id="snapBtn">Screenshot</button>
+        <div class="mt-6 grid sm:grid-cols-2 gap-4">
+          <div class="rounded-2xl p-4 glass dark:glass-dark border border-white/50 dark:border-white/10 shadow-soft">
+            <p class="font-semibold">Transparent Data</p>
+            <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Everything visible on a public map and leaderboard.</p>
+          </div>
+          <div class="rounded-2xl p-4 glass dark:glass-dark border border-white/50 dark:border-white/10 shadow-soft">
+            <p class="font-semibold">Community‑first</p>
+            <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">District‑wise recognition, monthly celebrity meet.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== INTERACTIVE LESSONS ===== -->
-  <section class="container" id="lessons">
-    <div class="head reveal">
-      <h3 class="title">Interactive Lesson</h3>
-      <p class="lead">HTML5 video player with progress memory</p>
-    </div>
-    <div class="panel reveal" style="max-width:900px; margin-inline:auto;">
-      <video id="lessonVideo" controls style="width:100%; border-radius:14px; border:1px solid var(--border)">
-        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <div style="display:flex; gap:8px; margin-top:10px; justify-content:center">
-        <button class="btn flat" id="markComplete">Mark Complete</button>
-        <span id="lessonBadge" class="chip" style="display:none">✓ Completed</span>
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works" class="py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold tracking-tight">How it works</h2>
+      <div class="mt-8 grid lg:grid-cols-3 gap-6">
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6 bg-white dark:bg-slate-950 shadow-card">
+          <p class="text-xs uppercase tracking-wide text-slate-500">Step 1</p>
+          <h3 class="mt-1 font-semibold">Collect TEK</h3>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Interview elders, map local indicators, and define missions.</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6 bg-white dark:bg-slate-950 shadow-card">
+          <p class="text-xs uppercase tracking-wide text-slate-500">Step 2</p>
+          <h3 class="mt-1 font-semibold">Mobilize Youth</h3>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Launch the app, earn points for verified submissions.</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6 bg-white dark:bg-slate-950 shadow-card">
+          <p class="text-xs uppercase tracking-wide text-slate-500">Step 3</p>
+          <h3 class="mt-1 font-semibold">Reward & Report</h3>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Top 10 per district meet a celebrity; export data for CSR.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== CONCISE NOTES ===== -->
-  <section id="notes" class="container">
-    <div class="head reveal">
-      <div class="chip">Notes • Concise • Quizzes • Formulas</div>
-      <h3 class="title" style="margin-top:8px">CONCISE NOTES</h3>
-      <p class="lead">Search, quiz and print to PDF</p>
-    </div>
-    <div class="panel reveal" style="display:grid; gap:12px">
-      <div style="display:flex; gap:8px; flex-wrap:wrap">
-        <input id="noteSearch" placeholder="Search notes…" style="flex:1; padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text)">
-        <button class="btn flat" id="printNotes">Print / Save PDF</button>
+  <!-- IMPACT (SVG charts) -->
+  <section id="impact" class="py-16 bg-slate-50 dark:bg-slate-900/40">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-8 items-start">
+      <div class="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 bg-white dark:bg-slate-950 shadow-card">
+        <div class="flex items-center justify-between">
+          <div><h3 class="font-semibold">Mission Activity (14d)</h3><p class="text-sm text-slate-500">Submissions / day</p></div>
+        </div>
+        <svg viewBox="0 0 600 220" class="mt-4 w-full h-56">
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stop-color="#10b981" stop-opacity="0.35"/><stop offset="95%" stop-color="#10b981" stop-opacity="0"/></linearGradient></defs>
+          <path d="M0,180 L40,170 L80,160 L120,150 L160,140 L200,138 L240,135 L280,120 L320,115 L360,110 L400,90 L440,70 L480,85 L520,95 L560,80 L600,70 L600,220 L0,220 Z" fill="url(#g1)"/>
+          <polyline fill="none" stroke="#10b981" stroke-width="3" points="0,180 40,170 80,160 120,150 160,140 200,138 240,135 280,120 320,115 360,110 400,90 440,70 480,85 520,95 560,80 600,70"/>
+        </svg>
       </div>
-      <div class="grid" id="notesGrid"></div>
-      <div class="panel" style="margin-top:6px">
-        <b>Quick Quiz</b>
-        <div id="quizArea" style="margin-top:8px"></div>
-        <button class="btn flat" id="submitQuiz" style="margin-top:10px">Submit Quiz</button>
-        <div id="quizResult" class="lead" style="margin-top:8px; display:none"></div>
+      <div class="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 bg-white dark:bg-slate-950 shadow-card">
+        <div class="flex items-center justify-between">
+          <div><h3 class="font-semibold">Waste Collected (tons)</h3><p class="text-sm text-slate-500">Last 6 months</p></div>
+        </div>
+        <svg viewBox="0 0 600 220" class="mt-4 w-full h-56">
+          <rect x="60" y="120" width="40" height="80" class="fill-fuchsia-500"></rect>
+          <rect x="160" y="100" width="40" height="100" class="fill-fuchsia-500"></rect>
+          <rect x="260" y="80" width="40" height="120" class="fill-fuchsia-500"></rect>
+          <rect x="360" y="70" width="40" height="130" class="fill-fuchsia-500"></rect>
+          <rect x="460" y="60" width="40" height="140" class="fill-fuchsia-500"></rect>
+        </svg>
       </div>
-      <div id="printArea" style="display:none"></div>
     </div>
   </section>
 
-  <!-- ===== JOIN CTA ===== -->
-  <section id="join" class="container">
-    <div class="panel reveal" style="display:grid; gap:12px; place-items:center; text-align:center">
-      <h3 class="title" style="margin:0">Join GURUKUL</h3>
-      <p class="lead" style="max-width:720px">Become part of a Swadeshi learning movement that blends ancient wisdom and modern AI.</p>
-      <form id="joinForm" style="display:grid; grid-template-columns: 1fr 1fr auto; gap:10px; width:min(720px, 100%)">
-        <label class="sr" for="name">Name</label>
-        <input id="name" required placeholder="Your Name" style="padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text)">
-        <label class="sr" for="email">Email</label>
-        <input id="email" required type="email" placeholder="you@example.com" style="padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text)">
-        <button class="btn" type="submit">Get Access</button>
-      </form>
-      <div id="joinThanks" class="lead" style="display:none">🎉 Welcome aboard! Check your inbox for the invite.</div>
+  <!-- FAQ -->
+  <section id="faq" class="py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold tracking-tight">Frequently asked questions</h2>
+      <div class="mt-8 grid md:grid-cols-2 gap-6">
+        <details class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-950 shadow-soft">
+          <summary class="font-semibold cursor-pointer">How are winners selected monthly?</summary>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Top 10 volunteers per district by points at 23:59 on the last day. Ties by earliest submission timestamp.</p>
+        </details>
+        <details class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-950 shadow-soft">
+          <summary class="font-semibold cursor-pointer">What is TEK?</summary>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Traditional Ecological Knowledge—intergenerational place‑based wisdom guiding missions and interpreting data.</p>
+        </details>
+        <details class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-950 shadow-soft">
+          <summary class="font-semibold cursor-pointer">Can sponsors export data?</summary>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Yes, datasets are public by default with export options for research and CSR reports.</p>
+        </details>
+        <details class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-950 shadow-soft">
+          <summary class="font-semibold cursor-pointer">Is there a mobile app?</summary>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">The web app is optimized for mobile and can be installed as a PWA.</p>
+        </details>
+      </div>
     </div>
   </section>
 
-  <!-- ===== FOOTER ===== -->
-  <footer>
-    <div class="container" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px">
-      <div style="display:flex; align-items:center; gap:10px">
-        <div class="seal" style="width:24px;height:24px"></div>
-        <b>GURUKUL</b>
-        <span class="lead">© <span id="year"></span></span>
+  <!-- PARTNERS + CTA -->
+  <section id="partners" class="py-16 bg-slate-50 dark:bg-slate-900/40">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow bg-white dark:bg-slate-950">
+        <div class="p-6 flex items-center justify-between">
+          <div><h3 class="font-semibold">Living Map</h3><p class="text-sm text-slate-500">Embed your map/dashboard</p></div>
+          <button class="text-xs px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-800">Share</button>
+        </div>
+        <div class="aspect-[16/9]"><iframe title="map" src="https://example.com/dashboard" class="w-full h-full" loading="lazy"></iframe></div>
       </div>
-      <div style="display:flex; gap:12px; color:var(--muted)">
-        <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Refunds</a>
+      <div class="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 bg-white dark:bg-slate-950 shadow flex flex-col">
+        <h3 class="font-semibold">Celebrity Meet Reward</h3>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Top 10 volunteers from <span class="font-semibold">every district</span> get to meet a celebrity at each month‑end. Scores lock on the last day at 23:59.</p>
+        <a href="dashboard.html#leaderboard" class="mt-auto inline-flex items-center gap-2 text-brand-600 hover:underline">See district leaderboards →</a>
       </div>
     </div>
+  </section>
+
+  <footer class="py-12 border-t border-slate-200 dark:border-slate-800">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-8 text-sm">
+      <div>
+        <div class="flex items-center gap-2 font-semibold">
+          <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white">CX</span>
+          <span>CosmosX</span>
+        </div>
+        <p class="mt-3 text-slate-600 dark:text-slate-300">Mobilizing citizens with TEK, missions, and transparent data.</p>
+      </div>
+      <div><p class="font-semibold">Product</p><ul class="mt-3 space-y-2 text-slate-600 dark:text-slate-300"><li><a href="#how-it-works" class="hover:underline">How it works</a></li><li><a href="#impact" class="hover:underline">Impact</a></li><li><a href="#faq" class="hover:underline">FAQ</a></li></ul></div>
+      <div><p class="font-semibold">Community</p><ul class="mt-3 space-y-2 text-slate-600 dark:text-slate-300"><li><a href="dashboard.html" class="hover:underline">Leaderboard</a></li><li><a href="auth.html" class="hover:underline">Join</a></li></ul></div>
+      <div><p class="font-semibold">Legal</p><ul class="mt-3 space-y-2 text-slate-600 dark:text-slate-300"><li>Privacy</li><li>Terms</li></ul></div>
+    </div>
+    <div class="mt-8 text-center text-xs text-slate-500">© <span id="year"></span> CosmosX</div>
   </footer>
 
-  <!-- Back to top -->
-  <button class="btn flat to-top" id="toTop" aria-label="Back to top">↑ Top</button>
-
-  <!-- ===== Schedule Modal ===== -->
-  <div class="overlay" id="scheduleModal" aria-hidden="true">
-    <div class="modal" role="dialog" aria-labelledby="schedTitle" aria-modal="true">
-      <header class="nav" style="padding:12px 16px">
-        <b id="schedTitle">Schedule Builder</b>
-        <button class="x" data-close="scheduleModal" aria-label="Close">✕</button>
-      </header>
-      <div class="body">
-        <div class="lead" style="margin-bottom:10px">Click slots to toggle study time. Save, export, or import an existing plan.</div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px">
-          <button class="btn flat" id="saveSchedule">Save</button>
-          <button class="btn flat" id="loadSchedule">Load</button>
-          <button class="btn flat" id="clearSchedule">Clear</button>
-          <button class="btn flat" id="exportSchedule">Export JSON</button>
-          <label class="btn flat" style="cursor:pointer">
-            Import JSON<input id="importSchedule" type="file" accept="application/json" style="display:none">
-          </label>
-        </div>
-        <div class="schedule-grid" id="schedGrid" aria-describedby="gridHelp"></div>
-        <p id="gridHelp" class="sr">Grid of times vs days, click to activate or deactivate slots.</p>
-      </div>
-      <div class="footer">
-        <button class="btn ghost" data-close="scheduleModal">Close</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    /* ===================== Helpers & State ===================== */
-    const $ = (q,root=document)=>root.querySelector(q);
-    const $$ = (q,root=document)=>[...root.querySelectorAll(q)];
-    const store = {
-      get(k,def=null){ try{ return JSON.parse(localStorage.getItem(k)) ?? def }catch{ return def } },
-      set(k,v){ localStorage.setItem(k, JSON.stringify(v)) },
-      del(k){ localStorage.removeItem(k) }
-    };
-    const KEY = {
-      theme:'gurukul-theme',
-      guild:'gurukul-guild',
-      schedule:'gurukul-schedule',
-      lesson:'gurukul-lesson-1'
-    };
-    $('#year').textContent = new Date().getFullYear();
-
-    // Smooth scroll
+  (function(){
+    const KEY='theme';
+    const root=document.documentElement;
+    const mq=window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+    const get=()=>localStorage.getItem(KEY) || (mq && mq.matches ? 'dark' : 'light');
+    const apply=t=>{ root.classList.toggle('dark', t==='dark'); root.setAttribute('data-theme', t); root.style.colorScheme=t; document.querySelectorAll('[data-theme-toggle]').forEach(b=>b.setAttribute('aria-pressed', t==='dark')); };
+    const set=t=>{ localStorage.setItem(KEY, t); apply(t); };
+    apply(get());
     document.addEventListener('click', (e)=>{
-      const t = e.target.closest('[data-scroll], a[href^="#"]');
-      if(!t) return;
-      const id = t.dataset.scroll || t.getAttribute('href');
-      if(!id || id === '#' || !id.startsWith('#')) return;
-      const el = document.querySelector(id);
-      if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth', block:'start'}); menuPanel.classList.remove('open'); }
+      const btn = e.target.closest('[data-theme-toggle]');
+      if(!btn) return;
+      const cur = get();
+      set(cur==='dark' ? 'light' : 'dark');
+    }, false);
+    mq && mq.addEventListener && mq.addEventListener('change', e=>{
+      if(!localStorage.getItem(KEY)) apply(e.matches ? 'dark' : 'light');
     });
-
-    // Mobile menu
-    const menuBtn = $('#menuBtn'), menuPanel = $('#menuPanel');
-    const mq = window.matchMedia('(max-width: 1024px)');
-    function updateMenuBtn(){ menuBtn.style.display = mq.matches ? 'inline-flex' : 'none'; if(!mq.matches) menuPanel.classList.remove('open'); }
-    mq.addEventListener('change', updateMenuBtn); updateMenuBtn();
-    menuBtn.addEventListener('click', ()=>menuPanel.classList.toggle('open'));
-
-    // Theme
-    const themeBtn = $('#themeBtn');
-    const savedTheme = localStorage.getItem(KEY.theme);
-    if(savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
-    themeBtn.addEventListener('click', ()=>{
-      const root = document.documentElement;
-      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      root.setAttribute('data-theme', next);
-      localStorage.setItem(KEY.theme, next);
-    });
-
-    // Header buttons
-    $('#launch').addEventListener('click', ()=>$('#tutor').scrollIntoView({behavior:'smooth'}));
-    $('#demo').addEventListener('click', ()=>$('#features').scrollIntoView({behavior:'smooth'}));
-
-    // Reveal
-    const io = new IntersectionObserver((entries)=>{
-      for(const it of entries){ if(it.isIntersecting){ it.target.classList.add('in'); io.unobserve(it.target); } }
-    }, {threshold:.12});
-    $$('.reveal').forEach(el=>io.observe(el));
-
-    // Parallax + back to top
-    const pillars = $('.pillars');
-    window.addEventListener('scroll', ()=>{
-      pillars.style.transform = `translateY(${window.scrollY * 0.08}px)`;
-      $('#toTop').classList.toggle('show', window.scrollY > 600);
-    });
-    $('#toTop').addEventListener('click', ()=>window.scrollTo({top:0, behavior:'smooth'}));
-
-    /* ===================== Sticky Nav Tag + Scrollspy ===================== */
-    const sections = [
-      {id:'home', label:'Home'},
-      {id:'features', label:'Features'},
-      {id:'guilds', label:'Guilds'},
-      {id:'tutor', label:'AI Tutor'},
-      {id:'vision', label:'3D Learning'},
-      {id:'lessons', label:'Lessons'},
-      {id:'notes', label:'Notes'},
-      {id:'join', label:'Join'}
-    ];
-    const stickyTag = $('#stickyTag');
-    const header = $('#siteHeader');
-    function setHeaderVar(){ document.documentElement.style.setProperty('--headerH', header.offsetHeight + 'px'); }
-    setHeaderVar(); window.addEventListener('resize', setHeaderVar);
-
-    const navLinks = new Map();
-    $$('#mainNav a').forEach(a => navLinks.set(a.getAttribute('href').slice(1), a));
-
-    const spy = new IntersectionObserver((entries)=>{
-      entries.forEach(en=>{
-        if(!en.isIntersecting) return;
-        const id = en.target.id;
-        const meta = sections.find(s=>s.id===id);
-        if(!meta) return;
-        stickyTag.textContent = meta.label;
-        stickyTag.style.display = (id === 'home') ? 'none' : 'inline-flex';
-        navLinks.forEach(a=>a.classList.remove('active'));
-        const link = navLinks.get(id);
-        if(link) link.classList.add('active');
-      });
-    }, {rootMargin: "-40% 0px -55% 0px", threshold: 0.01});
-    sections.forEach(s => { const el = document.getElementById(s.id); if(el) spy.observe(el); });
-
-    /* ===================== Guild Hub ===================== */
-    const currentGuildEl = $('#currentGuild');
-    function setGuild(name){
-      if(name) store.set(KEY.guild, name); else store.del(KEY.guild);
-      currentGuildEl.textContent = name ?? '—';
-      $('#joinMsg').style.display = name ? 'block' : 'none';
-      $('#leaveMsg').style.display = name ? 'none' : 'block';
-      const feed = $('#feed');
-      const li = document.createElement('li');
-      li.textContent = name ? `You joined ${name} • Karma +20` : 'You left the guild. Karma -5';
-      feed.appendChild(li);
-    }
-    const savedGuild = store.get(KEY.guild, null);
-    if(savedGuild){ currentGuildEl.textContent = savedGuild; $('#joinMsg').style.display='block'; }
-    $('#joinBtn').addEventListener('click', ()=> setGuild('InventorsIndia'));
-    $('#leaveBtn').addEventListener('click', ()=> setGuild(null));
-    const ticker = ['New weekly challenge posted','Nisha topped Focus rank','Team SmartMonks won quiz war','Hackathon opens tonight'];
-    setInterval(()=>{ const li = document.createElement('li'); li.textContent = ticker[Math.floor(Math.random()*ticker.length)]; $('#feed').appendChild(li); }, 5000);
-
-    /* ===================== AI Tutor (mini) ===================== */
-    const chatBox = $('#chatBox'), chatForm = $('#chatForm'), chatInput = $('#chatInput');
-    function bubble(text, who='bot'){
-      const wrap = document.createElement('div');
-      wrap.style.display='flex'; wrap.style.margin='6px 0'; wrap.style.justifyContent = who==='you' ? 'flex-end' : 'flex-start';
-      const b = document.createElement('div');
-      b.style.maxWidth='75%'; b.style.padding='10px 12px'; b.style.border='1px solid var(--border)';
-      b.style.borderRadius='12px'; b.style.background = who==='you' ? 'rgba(255,196,102,.15)' : 'rgba(255,196,102,.08)';
-      b.innerHTML = text;
-      wrap.appendChild(b); chatBox.appendChild(wrap); chatBox.scrollTop = chatBox.scrollHeight;
-    }
-    function guruAnswer(q){
-      const s = q.toLowerCase();
-      if(s.includes('quadratic')) return 'Quadratic formula: <b>x = (-b ± √(b²-4ac)) / 2a</b>. Want a 1-min derivation?';
-      if(s.includes('ohm') || s.includes('v=i') || s.includes('v = i')) return 'Ohm’s Law: <b>V = I·R</b>. Units: V(Volts), I(Amps), R(Ω).';
-      if(s.includes('gravitation')) return 'Universal gravitation: <b>F = G·(m₁m₂)/r²</b>. Inverse-square laws are everywhere 🌌';
-      if(s.includes('hello') || s.includes('hi')) return 'Namaste 🙏 Ask any formula or concept.';
-      if(s.includes('derivative')) return 'd/dx xⁿ = n·xⁿ⁻¹; product rule: (fg)\' = f\'g + fg\'';
-      return 'Tell me the exact step you’re stuck on, I’ll guide you.';
-    }
-    $('#startChat').addEventListener('click', ()=>{ chatBox.innerHTML=''; bubble('New session started. What shall we learn today?'); });
-    chatForm.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const msg = chatInput.value.trim(); if(!msg) return;
-      bubble(msg, 'you'); chatInput.value='';
-      setTimeout(()=>bubble(guruAnswer(msg)), 300);
-    });
-    // Voice Assistant
-    const vaStatus = $('#vaStatus');
-    function speak(text){ try{ const u = new SpeechSynthesisUtterance(text); speechSynthesis.cancel(); speechSynthesis.speak(u);}catch{} }
-    $('#voiceAssist').addEventListener('click', ()=>{
-      try{
-        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!SR) throw new Error('no-sr');
-        const rec = new SR(); rec.lang = 'en-IN'; rec.interimResults = false; rec.maxAlternatives = 1;
-        vaStatus.style.display='inline-flex';
-        rec.onresult = (ev)=>{ const t = ev.results[0][0].transcript; bubble('🎙 ' + t, 'you'); const ans = guruAnswer(t); bubble(ans); speak(ans); };
-        rec.onend = ()=> vaStatus.style.display='none';
-        rec.onerror = ()=>{ vaStatus.style.display='none'; alert('Voice recognition not supported or blocked.'); };
-        rec.start();
-      }catch{ alert('Voice recognition not supported in this browser.'); }
-    });
-
-    /* ===================== Exhibition 3D: Starfield + Labeled, Lit Cube ===================== */
-    ;(function(){
-      const wrap = document.getElementById('spaceWrap');
-      const stars = document.getElementById('stars');
-      const canvas = document.getElementById('scene');
-
-      // DPR resize helper
-      function resizeCanvas(c){
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const w = Math.floor(c.clientWidth * dpr);
-        const h = Math.floor(c.clientHeight * dpr || (c.clientWidth/16*9)*dpr);
-        if(c.width!==w || c.height!==h){ c.width=w; c.height=h; }
-      }
-      const ro = new ResizeObserver(()=>{ resizeCanvas(stars); resizeCanvas(canvas); });
-      ro.observe(wrap); resizeCanvas(stars); resizeCanvas(canvas);
-
-      /* --- Animated starfield (2D) --- */
-      const sctx = stars.getContext('2d');
-      let starArr=[];
-      function buildStars(){
-        starArr = Array.from({length:180}, ()=>({
-          x: Math.random()*stars.width,
-          y: Math.random()*stars.height,
-          z: Math.random()*0.8 + 0.2,
-          r: Math.random()*1.6 + 0.4
-        }));
-      }
-      buildStars();
-      function drawStars(){
-        sctx.clearRect(0,0,stars.width,stars.height);
-        for(const st of starArr){
-          const par = 1 + (st.z*0.6);
-          sctx.globalAlpha = 0.6*st.z + 0.2;
-          sctx.beginPath();
-          sctx.arc(st.x, st.y, st.r*par, 0, Math.PI*2);
-          sctx.fillStyle = '#fff';
-          sctx.fill();
-          st.x -= 0.15*st.z; if(st.x < -5) st.x = stars.width + 5;
-        }
-        sctx.globalAlpha=1;
-        requestAnimationFrame(drawStars);
-      }
-      drawStars();
-
-      /* --- WebGL cube --- */
-      const gl = canvas.getContext('webgl', {antialias:true, alpha:true}) || canvas.getContext('experimental-webgl');
-      if(!gl){
-        const ctx = canvas.getContext('2d'); ctx.fillStyle='#222'; ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle='#fff'; ctx.font='20px sans-serif'; ctx.fillText('WebGL not supported', 20, 36);
-        return;
-      }
-
-      function resizeGL(){ resizeCanvas(canvas); gl.viewport(0,0,gl.drawingBufferWidth, gl.drawingBufferHeight); }
-      resizeGL(); window.addEventListener('resize', resizeGL);
-
-      // Create label texture atlas (3x2 grid)
-      const labels = ['Math','Physics','Chemistry','Biology','History','CS'];
-      function makeAtlas(){
-        const cols=3, rows=2, cell=512;
-        const w = cols*cell, h = rows*cell;
-        const cx = document.createElement('canvas'); cx.width=w; cx.height=h;
-        const c = cx.getContext('2d');
-        // background gradient
-        const g = c.createLinearGradient(0,0,w,h); g.addColorStop(0,'#452b0b'); g.addColorStop(1,'#20140a');
-        c.fillStyle=g; c.fillRect(0,0,w,h);
-        c.textAlign='center'; c.textBaseline='middle';
-        for(let i=0;i<labels.length;i++){
-          const col = i%cols, row = Math.floor(i/cols);
-          const x = col*cell, y = row*cell;
-          // shiny frame
-          c.strokeStyle='rgba(255,196,102,0.45)'; c.lineWidth=8; c.strokeRect(x+14,y+14,cell-28,cell-28);
-          // glow circle
-          const rg = c.createRadialGradient(x+cell/2,y+cell/2,8, x+cell/2,y+cell/2, cell/2);
-          rg.addColorStop(0,'rgba(255,196,102,0.32)'); rg.addColorStop(1,'rgba(0,0,0,0)');
-          c.fillStyle=rg; c.beginPath(); c.arc(x+cell/2,y+cell/2,cell*0.45,0,Math.PI*2); c.fill();
-          // text
-          c.font = 'bold 120px Georgia, serif';
-          c.fillStyle='#ffe5b3'; c.fillText(labels[i], x+cell/2, y+cell/2);
-        }
-        return cx;
-      }
-      const atlas = makeAtlas();
-
-      // Shaders (textured + Phong lighting)
-      const vs = `
-        attribute vec3 aPos; attribute vec3 aNorm; attribute vec2 aUV;
-        uniform mat4 uMVP, uM, uN; varying vec3 vN; varying vec3 vW; varying vec2 vUV;
-        void main(){
-          vec4 world = uM * vec4(aPos,1.0);
-          vW = world.xyz;
-          vN = mat3(uN) * aNorm;
-          vUV = aUV;
-          gl_Position = uMVP * vec4(aPos,1.0);
-        }`;
-      const fs = `
-        precision mediump float;
-        varying vec3 vN; varying vec3 vW; varying vec2 vUV;
-        uniform sampler2D uTex;
-        uniform vec3 uEye, uLightDir;
-        void main(){
-          vec3 N = normalize(vN);
-          vec3 L = normalize(-uLightDir);
-          vec3 V = normalize(uEye - vW);
-          vec3 H = normalize(L+V);
-          float diff = max(dot(N,L), 0.0);
-          float spec = pow(max(dot(N,H), 0.0), 32.0);
-          vec3 tex = texture2D(uTex, vUV).rgb;
-          vec3 col = tex* (0.18 + 0.82*diff) + vec3(1.0,0.9,0.6)*spec*0.6;
-          gl_FragColor = vec4(col, 1.0);
-        }`;
-      function sh(type, src){ const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
-        if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
-      const prog = gl.createProgram();
-      gl.attachShader(prog, sh(gl.VERTEX_SHADER,vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER,fs));
-      gl.linkProgram(prog); if(!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
-      gl.useProgram(prog);
-
-      // Cube geometry with per-face normals and UVs mapped to 3x2 atlas
-      function cube(){
-        const positions=[], normals=[], uvs=[], indices=[];
-        const faces = [
-          {n:[ 0, 0, 1], uvOff:[0,0]}, // +Z  -> cell (0,0)
-          {n:[ 0, 0,-1], uvOff:[1,0]}, // -Z  -> (1,0)
-          {n:[ 1, 0, 0], uvOff:[2,0]}, // +X  -> (2,0)
-          {n:[-1, 0, 0], uvOff:[0,1]}, // -X  -> (0,1)
-          {n:[ 0, 1, 0], uvOff:[1,1]}, // +Y  -> (1,1)
-          {n:[ 0,-1, 0], uvOff:[2,1]}, // -Y  -> (2,1)
-        ];
-        const v = [
-          [-1,-1, 1],[ 1,-1, 1],[ 1, 1, 1],[-1, 1, 1], // +Z
-          [-1,-1,-1],[ 1,-1,-1],[ 1, 1,-1],[-1, 1,-1]  // -Z
-        ];
-        const quads = [
-          [0,1,2,3], [5,4,7,6], [1,5,6,2], [4,0,3,7], [3,2,6,7], [4,5,1,0]
-        ];
-        const cell = [1/3, 1/2];
-        for(let f=0; f<6; f++){
-          const quad = quads[f]; const off = positions.length/3;
-          const nx = faces[f].n[0], ny = faces[f].n[1], nz = faces[f].n[2];
-          const u0 = faces[f].uvOff[0]*cell[0], v0 = faces[f].uvOff[1]*cell[1];
-          const u1 = u0 + cell[0], v1 = v0 + cell[1];
-          const uvFace = [[u0,v1],[u1,v1],[u1,v0],[u0,v0]]; // flip V
-          for(let i=0;i<4;i++){
-            const p = v[quad[i]];
-            positions.push(p[0],p[1],p[2]);
-            normals.push(nx,ny,nz);
-            const uv = uvFace[i]; uvs.push(uv[0],uv[1]);
-          }
-          indices.push(off,off+1,off+2, off+2,off+3,off);
-        }
-        return {
-          pos:new Float32Array(positions),
-          nor:new Float32Array(normals),
-          uv:new Float32Array(uvs),
-          idx:new Uint16Array(indices)
-        };
-      }
-      const geom = cube();
-      function buf(target,data, usage=gl.STATIC_DRAW){ const b=gl.createBuffer(); gl.bindBuffer(target,b); gl.bufferData(target,data,usage); return b; }
-      const vbo = buf(gl.ARRAY_BUFFER, geom.pos);
-      const nbo = buf(gl.ARRAY_BUFFER, geom.nor);
-      const tbo = buf(gl.ARRAY_BUFFER, geom.uv);
-      const ibo = buf(gl.ELEMENT_ARRAY_BUFFER, geom.idx);
-
-      function attrib(name, size, type, buf, stride=0, off=0){
-        const loc = gl.getAttribLocation(prog,name);
-        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-        gl.enableVertexAttribArray(loc);
-        gl.vertexAttribPointer(loc, size, type, false, stride, off);
-      }
-      attrib('aPos',3,gl.FLOAT,vbo);
-      attrib('aNorm',3,gl.FLOAT,nbo);
-      attrib('aUV',2,gl.FLOAT,tbo);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-      gl.enable(gl.DEPTH_TEST);
-
-      // Upload texture
-      const tex = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,atlas);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.generateMipmap(gl.TEXTURE_2D);
-
-      // Uniforms
-      const uMVP = gl.getUniformLocation(prog,'uMVP');
-      const uM = gl.getUniformLocation(prog,'uM');
-      const uN = gl.getUniformLocation(prog,'uN');
-      const uEye = gl.getUniformLocation(prog,'uEye');
-      const uLightDir = gl.getUniformLocation(prog,'uLightDir');
-
-      // Mat4 helpers
-      function mul(a,b){ const r=new Float32Array(16);
-        for(let i=0;i<4;i++) for(let j=0;j<4;j++) r[i*4+j]=a[i*4]*b[j]+a[i*4+1]*b[j+4]+a[i*4+2]*b[j+8]+a[i*4+3]*b[j+12]; return r; }
-      function ident(){ const m=new Float32Array(16); m[0]=m[5]=m[10]=m[15]=1; return m; }
-      function translate(x,y,z){ const m=ident(); m[12]=x; m[13]=y; m[14]=z; return m; }
-      function rotX(t){ const c=Math.cos(t), s=Math.sin(t); return new Float32Array([1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1]); }
-      function rotY(t){ const c=Math.cos(t), s=Math.sin(t); return new Float32Array([c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1]); }
-      function perspective(fov, aspect, near, far){ const f=1/Math.tan(fov/2), nf=1/(near-far);
-        const m=new Float32Array(16); m[0]=f/aspect; m[5]=f; m[10]=(far+near)*nf; m[11]=-1; m[14]=(2*far*near)*nf; return m; }
-      function invT(m){ // inverse transpose for normals (for our simple rotations/translations)
-        const it = new Float32Array(m); it[12]=it[13]=it[14]=0; return it;
-      }
-
-      // Controls
-      let spin=true, t=0, rx=0.5, ry=0.8, vx=0, vy=0;
-      const INERTIA=0.95, DRAG=0.012, SPIN=0.3;
-      let dragging=false, lx=0, ly=0;
-
-      function pointerDown(x,y){ dragging=true; lx=x; ly=y; }
-      function pointerMove(x,y){
-        if(!dragging) return;
-        const dx=x-lx, dy=y-ly; lx=x; ly=y;
-        ry += dx*DRAG; rx += dy*DRAG;
-        vy = dx*DRAG; vx = dy*DRAG;
-      }
-      function pointerUp(){ dragging=false; }
-
-      canvas.addEventListener('mousedown', e=>pointerDown(e.clientX,e.clientY));
-      window.addEventListener('mousemove', e=>pointerMove(e.clientX,e.clientY));
-      window.addEventListener('mouseup', pointerUp);
-      canvas.addEventListener('touchstart', e=>{ const t=e.touches[0]; pointerDown(t.clientX,t.clientY); }, {passive:true});
-      canvas.addEventListener('touchmove', e=>{ const t=e.touches[0]; pointerMove(t.clientX,t.clientY); }, {passive:true});
-      canvas.addEventListener('touchend', pointerUp);
-
-      document.getElementById('spin').addEventListener('click', ()=> spin=true);
-      document.getElementById('pause3d').addEventListener('click', ()=> spin=false);
-      document.getElementById('reset3d').addEventListener('click', ()=>{ rx=0.5; ry=0.8; vx=vy=0; t=0; spin=true; });
-
-      // Fullscreen & Screenshot
-      document.getElementById('fsBtn').addEventListener('click', ()=>{
-        if(wrap.requestFullscreen) wrap.requestFullscreen();
-      });
-      document.getElementById('snapBtn').addEventListener('click', ()=>{
-        // Compose stars + scene into one image using an offscreen canvas
-        const dpr = Math.min(window.devicePixelRatio||1,2);
-        const w = canvas.width, h = canvas.height;
-        const out = document.createElement('canvas'); out.width=w; out.height=h;
-        const ctx = out.getContext('2d');
-        ctx.drawImage(stars,0,0,w,h);
-        ctx.drawImage(canvas,0,0,w,h);
-        const a = document.createElement('a');
-        a.href = out.toDataURL('image/png'); a.download = 'gurukul-concept-cube.png'; a.click();
-      });
-
-      // lighting & camera
-      const eye = new Float32Array([0,0,8]);
-      const lightDir = new Float32Array([ -0.6, 0.7, 0.3 ]);
-
-      function frame(){
-        gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-
-        if(spin){ t += 0.016*SPIN; ry += 0.002; } // auto-tour yaw
-        // inertia
-        if(!dragging){ ry += vy; rx += vx; vy*=INERTIA; vx*=INERTIA; }
-
-        const aspect = gl.drawingBufferWidth / gl.drawingBufferHeight;
-        const P = perspective(Math.PI/3, aspect, 0.1, 100);
-        const V = translate(0,0,-6.5);
-        const R = mul(rotY(ry), rotX(rx));
-        const M = R; // model at origin
-        const MVP = mul(P, mul(V, M));
-
-        gl.uniformMatrix4fv(uMVP,false,MVP);
-        gl.uniformMatrix4fv(uM,false,M);
-        gl.uniformMatrix4fv(uN,false,invT(M));
-        gl.uniform3fv(uEye, eye);
-        gl.uniform3fv(uLightDir, lightDir);
-
-        gl.drawElements(gl.TRIANGLES, geom.idx.length, gl.UNSIGNED_SHORT, 0);
-        requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-    })();
-
-    /* ===================== Interactive Lesson ===================== */
-    const video = $('#lessonVideo'), badge = $('#lessonBadge');
-    const lessonState = store.get(KEY.lesson, {time:0, done:false});
-    if(lessonState.time>0) video.currentTime = lessonState.time;
-    if(lessonState.done) badge.style.display='inline-flex';
-    video.addEventListener('timeupdate', ()=> store.set(KEY.lesson, {time: video.currentTime, done:lessonState.done}));
-    $('#markComplete').addEventListener('click', ()=>{ badge.style.display='inline-flex'; store.set(KEY.lesson, {time: video.currentTime, done:true}); });
-
-    /* ===================== Schedule Builder ===================== */
-    const scheduleModal = $('#scheduleModal');
-    const openSchedule = $('#openSchedule');
-    const schedGrid = $('#schedGrid');
-    const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-    function openModal(mod){ mod.classList.add('open'); mod.setAttribute('aria-hidden','false'); }
-    function closeModalById(id){ const m = document.getElementById(id); if(m){ m.classList.remove('open'); m.setAttribute('aria-hidden','true'); } }
-    function hours(){ return Array.from({length:17},(_,i)=>i+6) } // 6AM - 10PM
-    function buildScheduleGrid(activeSet=new Set()){
-      schedGrid.innerHTML='';
-      const hdr = document.createElement('div'); hdr.className='h'; hdr.textContent='';
-      schedGrid.append(hdr, ...days.map(d=>{const el=document.createElement('div'); el.className='h'; el.textContent=d; return el;}));
-      for(const h of hours()){
-        const label = document.createElement('div'); label.className='h'; label.style.textAlign='right';
-        label.textContent = (h%12||12)+ (h<12?' AM':' PM'); schedGrid.appendChild(label);
-        for(let d=0; d<7; d++){
-          const key = `${days[d]}-${h}`;
-          const slot = document.createElement('div');
-          slot.className='slot' + (activeSet.has(key)?' on':''); slot.role='button'; slot.tabIndex=0;
-          slot.dataset.key = key;
-          slot.addEventListener('click', ()=> slot.classList.toggle('on'));
-          slot.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); slot.click(); }});
-          schedGrid.appendChild(slot);
-        }
-      }
-    }
-    function collectSchedule(){ const on = $$('.slot.on', schedGrid).map(s=>s.dataset.key); return { generatedAt: new Date().toISOString(), slots: on }; }
-    function setFromPlan(plan){ buildScheduleGrid(new Set((plan && plan.slots) || [])); }
-
-    openSchedule.addEventListener('click', ()=>{
-      const saved = store.get(KEY.schedule, null);
-      buildScheduleGrid(saved ? new Set(saved.slots) : new Set());
-      openModal(scheduleModal);
-    });
-    document.addEventListener('click',(e)=>{
-      const closeBtn = e.target.closest('[data-close]');
-      if(closeBtn){ closeModalById(closeBtn.getAttribute('data-close')); }
-      if(e.target.classList.contains('overlay')){ e.target.classList.remove('open'); e.target.setAttribute('aria-hidden','true'); }
-    });
-    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ $$('.overlay.open').forEach(m=>{ m.classList.remove('open'); m.setAttribute('aria-hidden','true'); }); }});
-
-    $('#saveSchedule').addEventListener('click', ()=>{ const plan=collectSchedule(); store.set(KEY.schedule, plan); alert('Schedule saved ✅'); });
-    $('#loadSchedule').addEventListener('click', ()=>{ const plan=store.get(KEY.schedule,null); if(!plan) return alert('No saved schedule'); setFromPlan(plan); });
-    $('#clearSchedule').addEventListener('click', ()=>{ buildScheduleGrid(new Set()); });
-    $('#exportSchedule').addEventListener('click', ()=>{
-      const plan = collectSchedule();
-      const blob = new Blob([JSON.stringify(plan,null,2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download='gurukul-schedule.json'; a.click(); URL.revokeObjectURL(url);
-    });
-    $('#importSchedule').addEventListener('change', (e)=>{
-      const f = e.target.files[0]; if(!f) return;
-      const r = new FileReader();
-      r.onload = ()=>{ try{ const plan = JSON.parse(r.result); setFromPlan(plan); }catch{ alert('Invalid JSON'); } };
-      r.readAsText(f);
-    });
-
-    /* ===================== Notes, Search, Quiz, Print ===================== */
-    const notesData = [
-      {cat:'Mind Map', text:'Vedas → Upanishads → Darshanas'},
-      {cat:'Math', text:'Quadratic: x = (-b ± √(b²-4ac)) / 2a'},
-      {cat:'Physics', text:'Ohm: V = I·R'},
-      {cat:'Physics', text:'Gravitation: F = G·(m₁m₂)/r²'},
-      {cat:'Chemistry', text:'Photosynthesis: 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂'},
-      {cat:'History', text:'Maurya Empire: Chandragupta (c. 321 BCE)'},
-      {cat:'Chemistry', text:'Periodic trends: IE ↑ across, ↓ down'},
-      {cat:'Math', text:'Derivative power rule: d(xⁿ)/dx = n·xⁿ⁻¹'},
-    ];
-    const notesGrid = $('#notesGrid');
-    function renderNotes(filter=''){
-      notesGrid.innerHTML='';
-      const q = filter.trim().toLowerCase();
-      const list = notesData.filter(n => n.cat.toLowerCase().includes(q) || n.text.toLowerCase().includes(q));
-      for(const n of list){
-        const card = document.createElement('article'); card.className='feature';
-        card.innerHTML = `<div class="chip">${n.cat}</div><h4>${n.text.split(':')[0]}</h4><p>${n.text}</p>`;
-        notesGrid.appendChild(card);
-      }
-      const printArea = $('#printArea');
-      printArea.innerHTML = `<h2>GURUKUL Concise Notes</h2><ul>${list.map(n=>`<li><b>${n.cat}:</b> ${n.text}</li>`).join('')}</ul>`;
-    }
-    renderNotes();
-    $('#noteSearch').addEventListener('input', (e)=>renderNotes(e.target.value));
-    $('#printNotes').addEventListener('click', ()=> window.print());
-
-    const quiz = [
-      {q:'What is the quadratic formula?', a:['x = (-b ± √(b²-4ac)) / 2a','x = b² - 4ac','x = (a±b)/2'], correct:0},
-      {q:'Ohm’s Law relates:', a:['F, m, r','V, I, R','x, y, z'], correct:1},
-      {q:'Inverse-square applies to:', a:['Gravitation','Linear motion','Arithmetic mean'], correct:0},
-    ];
-    function renderQuiz(){
-      const qa = $('#quizArea'); qa.innerHTML='';
-      quiz.forEach((item,i)=>{
-        const box = document.createElement('div'); box.style.margin='8px 0';
-        box.innerHTML=`<div><b>${i+1}. ${item.q}</b></div>` + item.a.map((opt,j)=>`
-            <label style="display:block; margin:4px 0">
-              <input type="radio" name="q${i}" value="${j}"> ${opt}
-            </label>`).join('');
-        qa.appendChild(box);
-      });
-    }
-    renderQuiz();
-    $('#submitQuiz').addEventListener('click', ()=>{
-      let score=0;
-      quiz.forEach((item,i)=>{
-        const v = (document.querySelector(`input[name="q${i}"]:checked`)||{}).value;
-        if(Number(v)===item.correct) score++;
-      });
-      const out = $('#quizResult'); out.style.display='block';
-      out.textContent = `Score: ${score}/${quiz.length} — ${score===quiz.length?'Perfect 🔥': score>=2?'Great job ✅':'Keep practicing 💪'}`;
-    });
-
-    /* ===================== Join form ===================== */
-    $('#joinForm').addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const name = $('#name').value.trim(); const email = $('#email').value.trim();
-      if(!name || !email){ alert('Please fill your name and email.'); return; }
-      $('#joinThanks').style.display = 'block';
-      e.target.reset();
-    });
-
-  </script>
+  })();
+</script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
